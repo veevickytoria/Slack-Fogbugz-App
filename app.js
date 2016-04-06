@@ -123,7 +123,7 @@ var getFogbugzCase = function(query, responseUrl) {
       }
       else {
         var slackResponse = {
-                      "text": "Sorry, no case fund..."}
+                      "text": "Sorry, no case found..."}
         request.post({
           url: responseUrl,
           body: JSON.stringify(slackResponse)
