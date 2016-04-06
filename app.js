@@ -1,6 +1,11 @@
 var express = require("express");
 var app = express();
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
 // Set up a URL route
 app.get("/", function(req, res) {
  res.send("Heroku Demo!");
@@ -8,7 +13,8 @@ app.get("/", function(req, res) {
 
 app.post("/fogbugz", function(req, res) {
   console.log("Command received");
-  var text = req.body
+  console.log(req.body);
+  var text = res.json(req.body);
   res.send(text)
 });
 
