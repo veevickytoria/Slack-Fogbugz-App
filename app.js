@@ -21,12 +21,14 @@ app.post("/fogbugz", function(req, res) {
     var responseUrl = req.body.response_url
     console.log(req.body);
 
+    var fogbugzRequest = {  "cmd": "search",
+                          "token": "pmchhmpstpi0dmdc8tnls3fn0f3ta3",
+                              "q": caseNumber,
+                           "cols": ["sTitle", "sStatus"] }
+
     request.post({
-      url:     "https://ixl.fogbugz.com/f/api/0/jsonapi",
-      form:    {  "cmd": "search",
-                  "token": "pmchhmpstpi0dmdc8tnls3fn0f3ta3",
-                  "q": caseNumber,
-                  "cols": ["sTitle", "sStatus"] }
+      url: "https://ixl.fogbugz.com/f/api/0/jsonapi",
+      body: JSON.stringify(fogbugzRequest)
     }, function(error, response, body){
       console.log(body);
     });
