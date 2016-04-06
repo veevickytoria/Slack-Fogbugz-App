@@ -24,7 +24,7 @@ app.post("/fogbugz", function(req, res) {
     var fogbugzRequest = {  "cmd": "search",
                           "token": "pmchhmpstpi0dmdc8tnls3fn0f3ta3",
                               "q": caseNumber,
-                           "cols": ["sTitle", "sStatus"] }
+                           "cols": ["sTitle", "sStatus", "sEmailAssignedTo", "ixPersonOpenedBy", "latestEvent"] }
 
     request.post({
       url: "https://ixl.fogbugz.com/f/api/0/jsonapi",
@@ -36,12 +36,27 @@ app.post("/fogbugz", function(req, res) {
       else {
         console.log(body);
         var jsonBody = JSON.parse(body)
+        console.log(jsonBody);
         var responseCases = jsonBody.data.cases
         for (var i = 0; i < responseCases.length; i++){
           var fCase = responseCases[i]
-          var responseText = fCase.sTitle + "\\n" + fCase.sStatus
-          console.log(responseText);
-          res.send(responseText);
+
+          var slackResponse = {"text": "Fogbugz Info",
+                        "attachments": [
+                                { "title": fCase.sTitle,
+                                  "title_link": "https://ixl.fogbugz.com/f/cases/"+ caseNumber + "/",
+                                  "text": "Status: " + fCase.sStatus + "\n"
+                                  + "Assigned To: " + fCase.sEmailAssignedTo + "\n"
+                                  + "Opened By: " + fCase.ixPersonOpenedBy
+                                }
+                              ]}
+
+          request.post({
+            url: responseUrl,
+            body: JSON.stringify(slackResponse)
+          }, function(error, response, body){
+
+          });
         }
       }
     });
