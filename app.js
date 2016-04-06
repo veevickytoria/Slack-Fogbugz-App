@@ -98,7 +98,7 @@ var getFogbugzCase = function(query, responseUrl) {
           var fCase = responseCases[i]
           var localDate = moment.utc(fCase.dtLastUpdated).toDate();
           //It's a mystery why Fogbugz send back case number in an array as [ 12345, 12345]
-          var caseNumberArray = fCase.ixBug.split(",")
+          var caseNumberArray = fCase.ixBug.toString().split(",")
           var caseNumber = caseNumberArray[0].trim()
           console.log(fCase);
           var slackResponse = {
