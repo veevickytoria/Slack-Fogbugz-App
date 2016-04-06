@@ -18,6 +18,6 @@
   "homepage": "https://github.com/zhengc/Slack-Fogbugz-App",
   "dependencies": {
     "express": "^4.13.4",
-    "body-parser-json": "^1.15.0"
+    "body-parser-json": "^1.9.2"
   }
 }
