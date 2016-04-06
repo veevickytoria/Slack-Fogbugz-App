@@ -35,12 +35,11 @@ app.post("/fogbugz", function(req, res) {
     else {
         var arr = reqText.split(" ")
         var command = arr[0]
-        console.log("Commands:" + arr)
         console.log("Command: " + command)
         if (command === "help") {
             res.send(helpText)
         }
-        else if (command == "details") {
+        else if (command === "details") {
             res.send("coming soon")
         }
         else if (parseInt(Number(command)) == command && !isNaN(parseInt(command, 10))) {
@@ -69,6 +68,7 @@ app.post("/fogbugz", function(req, res) {
               for (var i = 0; i < responseCases.length; i++){
                 var fCase = responseCases[i]
                 var localDate = moment.utc(fCase.dtLastUpdated.toString()).toDate();
+                console.log("date: " + localDate)
 
                 var slackResponse = {
                               "response_type": "in_channel",
@@ -79,7 +79,7 @@ app.post("/fogbugz", function(req, res) {
                                         "text": "Status: " + fCase.sStatus + "\n"
                                         + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
                                         + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
-                                        + "Last Edit: " + moment(localDate).format("L LT")
+                                        // + "Last Edit: " + moment(localDate).format("L LT")
                                       }
                                     ]}
 
