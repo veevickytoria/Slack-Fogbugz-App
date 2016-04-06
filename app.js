@@ -97,7 +97,7 @@ var getFogbugzCase = function(query, responseUrl) {
         for (var i = 0; i < responseCases.length; i++){
           var fCase = responseCases[i]
           var localDate = moment.utc(fCase.dtLastUpdated).toDate();
-
+          console.log(fCase);
           var slackResponse = {
                         "response_type": "in_channel",
                         "text": "Fogbugz Info",
