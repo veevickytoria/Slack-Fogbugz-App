@@ -30,6 +30,7 @@ app.post("/fogbugz", function(req, res) {
                     "Not working properly? Improvement suggestions? message me <@vzheng>"
 
     if (isNaN(reqText)) {
+        console.log("empty command")
         res.send(helpText)
     }
     else {
@@ -69,9 +70,6 @@ app.post("/fogbugz", function(req, res) {
               for (var i = 0; i < responseCases.length; i++){
                 var fCase = responseCases[i]
                 var localDate = moment.utc(fCase.dtLastUpdated).toDate();
-                console.log("date: " + localDate)
-                var guessedTimeZone = moment.tz.guess()
-                console.log("guessed time zone: " + guessedTimeZone)
 
                 var slackResponse = {
                               "response_type": "in_channel",
@@ -82,7 +80,7 @@ app.post("/fogbugz", function(req, res) {
                                         "text": "Status: " + fCase.sStatus + "\n"
                                         + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
                                         + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
-                                        // + "Last Edit: " + moment(localDate).format("L LT")
+                                        + "Last Edit: " + moment.tz(localDate, "America/Los_Angeles").format("L LT z")
                                       }
                                     ]}
 
