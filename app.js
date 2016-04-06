@@ -18,53 +18,72 @@ app.post("/fogbugz", function(req, res) {
 
   var immediateTextArray =["Let's hope Fogbugz is working...", "Hold on tight...", "Looking it up...", "Working on it now..."]
 
-  if (req.body.token == "y2ONQHnaruku0eV50W0j4AMl" && req.body.command == "/fogbugz") {
-    var caseNumber = req.body.text
-    var responseUrl = req.body.response_url
-    console.log(req.body);
-    var immediateText = immediateTextArray[Math.floor(Math.random() * immediateTextArray.length)];
-    res.send(immediateText)
+  if (req.body.token === "y2ONQHnaruku0eV50W0j4AMl" && req.body.command === "/fogbugz") {
 
-    var fogbugzRequest = {  "cmd": "search",
-                          "token": "pmchhmpstpi0dmdc8tnls3fn0f3ta3",
-                              "q": caseNumber,
-                           "cols": ["sTitle", "sStatus", "sPersonAssignedTo", "ixPersonOpenedBy", "ixPriority", "sPriority", "latestEvent"] }
+    var reqText = req.body.text
 
-    request.post({
-      url: "https://ixl.fogbugz.com/f/api/0/jsonapi",
-      body: JSON.stringify(fogbugzRequest)
-    }, function(error, response, body){
-      if(error || response.statusCode !== 200){
-        res.send("Ooops, there's something wrong with Fogbugz");
-      }
-      else {
-        console.log(body);
-        var jsonBody = JSON.parse(body)
-        console.log(jsonBody);
-        var responseCases = jsonBody.data.cases
-        for (var i = 0; i < responseCases.length; i++){
-          var fCase = responseCases[i]
+    var helpText = "Valid commands: [case number], details [case number] (coming soon) \n" +
+                    "To get quick info about a case: /fogbugz 12345 \n" +
+                    "To get more detailed info about a case /fogbugz details 12345 \n" +
+                    "Not working properly? Improvement suggestions? message me @vzheng"
 
-          var slackResponse = {
-                        "response_type": "in_channel",
-                        "text": "Fogbugz Info",
-                        "attachments": [
-                                { "title": caseNumber + ": " + fCase.sTitle,
-                                  "title_link": "https://ixl.fogbugz.com/f/cases/"+ caseNumber + "/",
-                                  "text": "Status: " + fCase.sStatus + "\n"
-                                  + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
-                                  + "Assigned To: " + fCase.sPersonAssignedTo
-                                }
-                              ]}
+    var isCaseNumber = !isNaN(reqText) && parseInt(Number(reqText)) == reqText && !isNaN(parseInt(reqText, 10));
 
-          request.post({
-            url: responseUrl,
-            body: JSON.stringify(slackResponse)
-          }, function(error, response, body){
-          });
+    if (reqText === "help") {
+        res.send(helpText)
+    }
+    else if (isCaseNumber){
+      var responseUrl = req.body.response_url
+      console.log(req.body);
+      var immediateText = immediateTextArray[Math.floor(Math.random() * immediateTextArray.length)];
+      res.send(immediateText)
+
+      var fogbugzRequest = {  "cmd": "search",
+                            "token": "pmchhmpstpi0dmdc8tnls3fn0f3ta3",
+                                "q": reqText,
+                             "cols": ["sTitle", "sStatus", "sPersonAssignedTo", "ixPriority", "sPriority", "dtLastUpdated"] }
+
+      request.post({
+        url: "https://ixl.fogbugz.com/f/api/0/jsonapi",
+        body: JSON.stringify(fogbugzRequest)
+      }, function(error, response, body){
+        if(error || response.statusCode !== 200){
+          res.send("Ooops, there's something wrong with Fogbugz");
         }
-      }
-    });
+        else {
+          console.log(body);
+          var jsonBody = JSON.parse(body)
+          console.log(jsonBody);
+          var responseCases = jsonBody.data.cases
+          for (var i = 0; i < responseCases.length; i++){
+            var fCase = responseCases[i]
+
+            var slackResponse = {
+                          "response_type": "in_channel",
+                          "text": "Fogbugz Info",
+                          "attachments": [
+                                  { "title": reqText + ": " + fCase.sTitle,
+                                    "title_link": "https://ixl.fogbugz.com/f/cases/"+ reqText + "/",
+                                    "text": "Status: " + fCase.sStatus + "\n"
+                                    + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
+                                    + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
+                                    + "Last Edit: " + fCase.dtLastUpdated
+                                  }
+                                ]}
+
+            request.post({
+              url: responseUrl,
+              body: JSON.stringify(slackResponse)
+            }, function(error, response, body){
+            });
+          }
+        }
+      });
+    }
+    else {
+        var errorText = "Sorry, " + req.body.text + " doesn't look like a valid command. \n" + helpText
+        res.send(errorText)
+    }
   }
 });
 
