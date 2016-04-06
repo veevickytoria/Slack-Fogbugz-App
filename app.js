@@ -28,63 +28,71 @@ app.post("/fogbugz", function(req, res) {
                     "To get more detailed info about a case /fogbugz details 12345 \n" +
                     "Not working properly? Improvement suggestions? message me <@vzheng>"
 
-    var isCaseNumber = !isNaN(reqText) && parseInt(Number(reqText)) == reqText && !isNaN(parseInt(reqText, 10));
-
-    if (reqText === "help") {
+    if (isNaN(reqText)) {
         res.send(helpText)
     }
-    else if (isCaseNumber){
-      var responseUrl = req.body.response_url
-      console.log(req.body);
-      var immediateText = immediateTextArray[Math.floor(Math.random() * immediateTextArray.length)];
-      res.send(immediateText)
+    else {
+        var arr = reqText.split(" ");
+        var command = arr[0]
+        if (command === "help") {
+            res.send(helpText)
+        }
+        else if (command == "details") {
+            res.send("coming soon")
+        }
+        else if (parseInt(Number(command)) == command && !isNaN(parseInt(command, 10))) {
+          var responseUrl = req.body.response_url
+          console.log(req.body);
+          var immediateText = immediateTextArray[Math.floor(Math.random() * immediateTextArray.length)];
+          res.send(immediateText)
 
-      var fogbugzRequest = {  "cmd": "search",
-                            "token": "pmchhmpstpi0dmdc8tnls3fn0f3ta3",
-                                "q": reqText,
-                             "cols": ["sTitle", "sStatus", "sPersonAssignedTo", "ixPriority", "sPriority", "dtLastUpdated"] }
+          var fogbugzRequest = {  "cmd": "search",
+                                "token": "pmchhmpstpi0dmdc8tnls3fn0f3ta3",
+                                    "q": reqText,
+                                 "cols": ["sTitle", "sStatus", "sPersonAssignedTo", "ixPriority", "sPriority", "dtLastUpdated"] }
 
-      request.post({
-        url: "https://ixl.fogbugz.com/f/api/0/jsonapi",
-        body: JSON.stringify(fogbugzRequest)
-      }, function(error, response, body){
-        if(error || response.statusCode !== 200){
-          res.send("Ooops, there's something wrong with Fogbugz");
+          request.post({
+            url: "https://ixl.fogbugz.com/f/api/0/jsonapi",
+            body: JSON.stringify(fogbugzRequest)
+          }, function(error, response, body){
+            if(error || response.statusCode !== 200){
+              res.send("Ooops, there's something wrong with Fogbugz");
+            }
+            else {
+              console.log(body);
+              var jsonBody = JSON.parse(body)
+              console.log(jsonBody);
+              var responseCases = jsonBody.data.cases
+              for (var i = 0; i < responseCases.length; i++){
+                var fCase = responseCases[i]
+                var formattedDate = moment.utc(fCase.dtLastUpdated).local().format("l LT")
+
+                var slackResponse = {
+                              "response_type": "in_channel",
+                              "text": "Fogbugz Info",
+                              "attachments": [
+                                      { "title": reqText + ": " + fCase.sTitle,
+                                        "title_link": "https://ixl.fogbugz.com/f/cases/"+ reqText + "/",
+                                        "text": "Status: " + fCase.sStatus + "\n"
+                                        + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
+                                        + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
+                                        + "Last Edit: " + formattedDate
+                                      }
+                                    ]}
+
+                request.post({
+                  url: responseUrl,
+                  body: JSON.stringify(slackResponse)
+                }, function(error, response, body){
+                });
+              }
+            }
+          });
         }
         else {
-          console.log(body);
-          var jsonBody = JSON.parse(body)
-          console.log(jsonBody);
-          var responseCases = jsonBody.data.cases
-          for (var i = 0; i < responseCases.length; i++){
-            var fCase = responseCases[i]
-            var formattedDate = moment.utc(fCase.dtLastUpdated).format("l LT")
-
-            var slackResponse = {
-                          "response_type": "in_channel",
-                          "text": "Fogbugz Info",
-                          "attachments": [
-                                  { "title": reqText + ": " + fCase.sTitle,
-                                    "title_link": "https://ixl.fogbugz.com/f/cases/"+ reqText + "/",
-                                    "text": "Status: " + fCase.sStatus + "\n"
-                                    + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
-                                    + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
-                                    + "Last Edit: " + formattedDate
-                                  }
-                                ]}
-
-            request.post({
-              url: responseUrl,
-              body: JSON.stringify(slackResponse)
-            }, function(error, response, body){
-            });
-          }
+          var errorText = "Sorry, " + req.body.text + " doesn't look like a valid command. \n" + helpText
+          res.send(errorText)
         }
-      });
-    }
-    else {
-        var errorText = "Sorry, " + req.body.text + " doesn't look like a valid command. \n" + helpText
-        res.send(errorText)
     }
   }
 });
