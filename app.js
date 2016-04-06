@@ -49,12 +49,11 @@ app.post("/fogbugz", function(req, res) {
                         "response_type": "in_channel",
                         "text": "Fogbugz Info",
                         "attachments": [
-                                { "title": fCase.sTitle,
+                                { "title": caseNumber + ": " + fCase.sTitle,
                                   "title_link": "https://ixl.fogbugz.com/f/cases/"+ caseNumber + "/",
                                   "text": "Status: " + fCase.sStatus + "\n"
                                   + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
-                                  + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
-                                  + "Opened By: " + fCase.ixPersonOpenedBy
+                                  + "Assigned To: " + fCase.sPersonAssignedTo
                                 }
                               ]}
 
