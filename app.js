@@ -30,6 +30,7 @@ app.post("/fogbugz", function(req, res) {
       url: "https://ixl.fogbugz.com/f/api/0/jsonapi",
       body: JSON.stringify(fogbugzRequest)
     }, function(error, response, body){
+      console.log(body);
       var responseCases = body.data.cases
       for (var i = 0; i < responseCases.length; i++){
         var fCase = responseCases[i]
@@ -37,7 +38,6 @@ app.post("/fogbugz", function(req, res) {
         console.log(responseText);
         res.send(responseText);
       }
-      console.log(body);
     });
   }
 });
