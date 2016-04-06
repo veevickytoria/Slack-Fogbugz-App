@@ -20,7 +20,7 @@ app.post("/fogbugz", function(req, res) {
     var caseNumber = req.body.text
     var responseUrl = req.body.response_url
     console.log(req.body);
-    res.sendStatus("Looking it up...")
+    res.send("Let's hope Fogbugz is working...")
 
     var fogbugzRequest = {  "cmd": "search",
                           "token": "pmchhmpstpi0dmdc8tnls3fn0f3ta3",
