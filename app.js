@@ -1,7 +1,7 @@
 var express = require("express");
 var bodyParser = require('body-parser');
 var request = require('request');
-var moment = require('moment');
+var moment = require('moment-timezone');
 var app = express();
 
 app.use(bodyParser.json());
@@ -33,8 +33,9 @@ app.post("/fogbugz", function(req, res) {
         res.send(helpText)
     }
     else {
-        var arr = reqText.split(" ")
-        var command = arr[0]
+        console.log("Req Text: " + reqText)
+        var tokens = reqText.split(" ")
+        var command = tokens[0].toString()
         console.log("Command: " + command)
         if (command === "help") {
             res.send(helpText)
@@ -69,6 +70,8 @@ app.post("/fogbugz", function(req, res) {
                 var fCase = responseCases[i]
                 var localDate = moment.utc(fCase.dtLastUpdated).toDate();
                 console.log("date: " + localDate)
+                var guessedTimeZone = moment.tz.guess()
+                console.log("guessed time zone: " + guessedTimeZone)
 
                 var slackResponse = {
                               "response_type": "in_channel",
