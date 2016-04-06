@@ -8,7 +8,7 @@ app.get("/", function(req, res) {
 
 app.post("/fogbugz", function(req, res) {
   console.log("Command received");
-  var text = req.body.text
+  var text = req.body
   res.send(text)
 });
 
