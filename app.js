@@ -1,7 +1,7 @@
 var express = require("express");
 var bodyParser = require('body-parser');
 var request = require('request');
-var moment = require('moment-timezone');
+var moment = require('moment');
 var app = express();
 
 app.use(bodyParser.json());
@@ -21,6 +21,7 @@ app.post("/fogbugz", function(req, res) {
 
   if (req.body.token === "y2ONQHnaruku0eV50W0j4AMl" && req.body.command === "/fogbugz") {
 
+    console.log(req.body)
     var reqText = req.body.text
 
     var helpText = "Valid commands: [case number], details [case number] (coming soon) \n" +
@@ -67,7 +68,7 @@ app.post("/fogbugz", function(req, res) {
               var responseCases = jsonBody.data.cases
               for (var i = 0; i < responseCases.length; i++){
                 var fCase = responseCases[i]
-                var formattedDate = moment(fCase.dtLastUpdated).tz(moment.tz.guess()).format("YYYY-MM-DD HH:mm")
+                var localDate = moment.utc(fCase.dtLastUpdated).toDate();
 
                 var slackResponse = {
                               "response_type": "in_channel",
@@ -78,7 +79,7 @@ app.post("/fogbugz", function(req, res) {
                                         "text": "Status: " + fCase.sStatus + "\n"
                                         + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
                                         + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
-                                        + "Last Edit: " + formattedDate
+                                        + "Last Edit: " + moment(localDate).format("YYYY-MM-DD HH:mm")
                                       }
                                     ]}
 
