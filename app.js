@@ -35,12 +35,15 @@ app.post("/fogbugz", function(req, res) {
         var arr = reqText.split(" ");
         var command = arr[0]
         if (command === "help") {
+            console.log("Command: " + command);
             res.send(helpText)
         }
         else if (command == "details") {
+            console.log("Command: " + command);
             res.send("coming soon")
         }
         else if (parseInt(Number(command)) == command && !isNaN(parseInt(command, 10))) {
+          console.log("Command: " + command);
           var responseUrl = req.body.response_url
           console.log(req.body);
           var immediateText = immediateTextArray[Math.floor(Math.random() * immediateTextArray.length)];
@@ -65,7 +68,7 @@ app.post("/fogbugz", function(req, res) {
               var responseCases = jsonBody.data.cases
               for (var i = 0; i < responseCases.length; i++){
                 var fCase = responseCases[i]
-                var formattedDate = moment.utc(fCase.dtLastUpdated).local().format("l LT")
+                var formattedDate = moment.parseZone(fCase.dtLastUpdated).local().format("l LT")
 
                 var slackResponse = {
                               "response_type": "in_channel",
