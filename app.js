@@ -16,11 +16,14 @@ app.get("/", function(req, res) {
 app.post("/fogbugz", function(req, res) {
   console.log("Command received");
 
+  var immediateTextArray =["Let's hope Fogbugz is working...", "Hold on tight...", "Looking it up...", "Working on it now..."]
+
   if (req.body.token == "y2ONQHnaruku0eV50W0j4AMl" && req.body.command == "/fogbugz") {
     var caseNumber = req.body.text
     var responseUrl = req.body.response_url
     console.log(req.body);
-    res.send("Let's hope Fogbugz is working...")
+    var immediateText = immediateTextArray[Math.floor(Math.random() * immediateTextArray.length)];
+    res.send(immediateText)
 
     var fogbugzRequest = {  "cmd": "search",
                           "token": "pmchhmpstpi0dmdc8tnls3fn0f3ta3",
