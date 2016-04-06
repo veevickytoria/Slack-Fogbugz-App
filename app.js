@@ -72,7 +72,7 @@ app.post("/fogbugz", function(req, res) {
 var immediateTextArray =["Let's hope Fogbugz is working...", "Hold on tight...", "Looking it up...", "Working on it now..."]
 
 var isCaseNumber = function(number) {
-  return isNaN(number) && parseInt(Number(number)) == number && !isNaN(parseInt(number, 10))
+  return !isNaN(number) && parseInt(Number(number)) == number && !isNaN(parseInt(number, 10))
 }
 
 var getFogbugzCase = function(query, responseUrl) {
