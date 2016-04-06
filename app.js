@@ -1,6 +1,7 @@
 var express = require("express");
 var bodyParser = require('body-parser');
 var request = require('request');
+var moment = require('moment');
 var app = express();
 
 app.use(bodyParser.json());
@@ -25,7 +26,7 @@ app.post("/fogbugz", function(req, res) {
     var helpText = "Valid commands: [case number], details [case number] (coming soon) \n" +
                     "To get quick info about a case: /fogbugz 12345 \n" +
                     "To get more detailed info about a case /fogbugz details 12345 \n" +
-                    "Not working properly? Improvement suggestions? message me @vzheng"
+                    "Not working properly? Improvement suggestions? message me <@vzheng>"
 
     var isCaseNumber = !isNaN(reqText) && parseInt(Number(reqText)) == reqText && !isNaN(parseInt(reqText, 10));
 
@@ -57,6 +58,7 @@ app.post("/fogbugz", function(req, res) {
           var responseCases = jsonBody.data.cases
           for (var i = 0; i < responseCases.length; i++){
             var fCase = responseCases[i]
+            var formattedDate = moment.utc(fCase.dtLastUpdated).format("l LT")
 
             var slackResponse = {
                           "response_type": "in_channel",
@@ -67,7 +69,7 @@ app.post("/fogbugz", function(req, res) {
                                     "text": "Status: " + fCase.sStatus + "\n"
                                     + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
                                     + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
-                                    + "Last Edit: " + fCase.dtLastUpdated
+                                    + "Last Edit: " + formattedDate
                                   }
                                 ]}
 
