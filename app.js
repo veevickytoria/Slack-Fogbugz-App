@@ -97,13 +97,16 @@ var getFogbugzCase = function(query, responseUrl) {
         for (var i = 0; i < responseCases.length; i++){
           var fCase = responseCases[i]
           var localDate = moment.utc(fCase.dtLastUpdated).toDate();
+          //It's a mystery why Fogbugz send back case number in an array as [ 12345, 12345]
+          var caseNumberArray = fCase.ixBug.split(",")
+          var caseNumber = caseNumberArray[0].trim()
           console.log(fCase);
           var slackResponse = {
                         "response_type": "in_channel",
                         "text": "Fogbugz Info",
                         "attachments": [
-                                { "title": fCase.ixBug[0] + ": " + fCase.sTitle,
-                                  "title_link": "https://ixl.fogbugz.com/f/cases/"+ fCase.fCase.ixBug[0] + "/",
+                                { "title": caseNumber + ": " + fCase.sTitle,
+                                  "title_link": "https://ixl.fogbugz.com/f/cases/"+ caseNumber + "/",
                                   "text": "Status: " + fCase.sStatus + "\n"
                                   + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
                                   + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
