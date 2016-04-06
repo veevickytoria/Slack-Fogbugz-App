@@ -41,7 +41,9 @@ app.post("/fogbugz", function(req, res) {
         for (var i = 0; i < responseCases.length; i++){
           var fCase = responseCases[i]
 
-          var slackResponse = {"text": "Fogbugz Info",
+          var slackResponse = {
+                        "response_type": "in_channel",
+                        "text": "Fogbugz Info",
                         "attachments": [
                                 { "title": fCase.sTitle,
                                   "title_link": "https://ixl.fogbugz.com/f/cases/"+ caseNumber + "/",
