@@ -1,7 +1,7 @@
 var express = require("express");
 var bodyParser = require('body-parser');
 var request = require('request');
-var moment = require('moment');
+var moment = require('moment-timezone');
 var app = express();
 
 app.use(bodyParser.json());
@@ -32,18 +32,17 @@ app.post("/fogbugz", function(req, res) {
         res.send(helpText)
     }
     else {
-        var arr = reqText.split(" ");
+        var arr = reqText.split(" ")
         var command = arr[0]
+        console.log("Commands:" + arr)
+        console.log("Command: " + command)
         if (command === "help") {
-            console.log("Command: " + command);
             res.send(helpText)
         }
         else if (command == "details") {
-            console.log("Command: " + command);
             res.send("coming soon")
         }
         else if (parseInt(Number(command)) == command && !isNaN(parseInt(command, 10))) {
-          console.log("Command: " + command);
           var responseUrl = req.body.response_url
           console.log(req.body);
           var immediateText = immediateTextArray[Math.floor(Math.random() * immediateTextArray.length)];
@@ -68,7 +67,7 @@ app.post("/fogbugz", function(req, res) {
               var responseCases = jsonBody.data.cases
               for (var i = 0; i < responseCases.length; i++){
                 var fCase = responseCases[i]
-                var formattedDate = moment.parseZone(fCase.dtLastUpdated).local().format("l LT")
+                var formattedDate = moment(fCase.dtLastUpdated).tz(moment.tz.guess()).format("YYYY-MM-DD HH:mm")
 
                 var slackResponse = {
                               "response_type": "in_channel",
