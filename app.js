@@ -102,7 +102,7 @@ var getFogbugzCase = function(query, responseUrl) {
                       "text": "Fogbugz Info",
                       "attachments": [
                               { "title": fCase.ixBug + ": " + fCase.sTitle,
-                                "title_link": "https://ixl.fogbugz.com/f/cases/"+ reqText + "/",
+                                "title_link": "https://ixl.fogbugz.com/f/cases/"+ fCase.ixBug + "/",
                                 "text": "Status: " + fCase.sStatus + "\n"
                                 + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
                                 + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
