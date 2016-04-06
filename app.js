@@ -93,23 +93,34 @@ var getFogbugzCase = function(query, responseUrl) {
       var jsonBody = JSON.parse(body)
       console.log(jsonBody);
       var responseCases = jsonBody.data.cases
-      for (var i = 0; i < responseCases.length; i++){
-        var fCase = responseCases[i]
-        var localDate = moment.utc(fCase.dtLastUpdated).toDate();
+      if (responseCases. length > 0) {
+        for (var i = 0; i < responseCases.length; i++){
+          var fCase = responseCases[i]
+          var localDate = moment.utc(fCase.dtLastUpdated).toDate();
 
+          var slackResponse = {
+                        "response_type": "in_channel",
+                        "text": "Fogbugz Info",
+                        "attachments": [
+                                { "title": fCase.ixBug + ": " + fCase.sTitle,
+                                  "title_link": "https://ixl.fogbugz.com/f/cases/"+ fCase.ixBug + "/",
+                                  "text": "Status: " + fCase.sStatus + "\n"
+                                  + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
+                                  + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
+                                  + "Last Edit: " + moment.tz(localDate, "America/Los_Angeles").format("L LT z")
+                                }
+                              ]}
+
+          request.post({
+            url: responseUrl,
+            body: JSON.stringify(slackResponse)
+          }, function(error, response, body){
+          });
+        }
+      }
+      else {
         var slackResponse = {
-                      "response_type": "in_channel",
-                      "text": "Fogbugz Info",
-                      "attachments": [
-                              { "title": fCase.ixBug + ": " + fCase.sTitle,
-                                "title_link": "https://ixl.fogbugz.com/f/cases/"+ fCase.ixBug + "/",
-                                "text": "Status: " + fCase.sStatus + "\n"
-                                + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
-                                + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
-                                + "Last Edit: " + moment.tz(localDate, "America/Los_Angeles").format("L LT z")
-                              }
-                            ]}
-
+                      "text": "Sorry, no case fund..."}
         request.post({
           url: responseUrl,
           body: JSON.stringify(slackResponse)
