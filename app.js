@@ -22,7 +22,7 @@ app.post("/fogbugz", function(req, res) {
   if (req.body.token === "y2ONQHnaruku0eV50W0j4AMl" && req.body.command === "/fogbugz") {
 
     console.log(req.body)
-    var reqText = req.body.text
+    var reqText = req.body.text.toString()
 
     var helpText = "Valid commands: [case number], details [case number] (coming soon) \n" +
                     "To get quick info about a case: /fogbugz 12345 \n" +
@@ -68,7 +68,7 @@ app.post("/fogbugz", function(req, res) {
               var responseCases = jsonBody.data.cases
               for (var i = 0; i < responseCases.length; i++){
                 var fCase = responseCases[i]
-                var localDate = moment.utc(fCase.dtLastUpdated).toDate();
+                var localDate = moment.utc(fCase.dtLastUpdated.toString()).toDate();
 
                 var slackResponse = {
                               "response_type": "in_channel",
@@ -79,7 +79,7 @@ app.post("/fogbugz", function(req, res) {
                                         "text": "Status: " + fCase.sStatus + "\n"
                                         + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
                                         + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
-                                        + "Last Edit: " + moment(localDate).format("YYYY-MM-DD HH:mm")
+                                        + "Last Edit: " + moment(localDate).format("L LT")
                                       }
                                     ]}
 
