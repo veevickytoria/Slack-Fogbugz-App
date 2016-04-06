@@ -55,7 +55,7 @@ app.post("/fogbugz", function(req, res) {
             url: responseUrl,
             body: JSON.stringify(slackResponse)
           }, function(error, response, body){
-
+            res.sendStatus(200)
           });
         }
       }
