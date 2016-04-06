@@ -29,12 +29,7 @@ app.post("/fogbugz", function(req, res) {
                     "To get more detailed info about a case /fogbugz details 12345 \n" +
                     "Not working properly? Improvement suggestions? message me <@vzheng>"
 
-    if (isNaN(reqText)) {
-        console.log("empty command")
-        res.send(helpText)
-    }
-    else {
-        console.log("Req Text: " + reqText)
+    if (reqText) {
         var tokens = reqText.split(" ")
         var command = tokens[0].toString()
         console.log("Command: " + command)
@@ -44,7 +39,7 @@ app.post("/fogbugz", function(req, res) {
         else if (command === "details") {
             res.send("coming soon")
         }
-        else if (parseInt(Number(command)) == command && !isNaN(parseInt(command, 10))) {
+        else if (isNaN(command) && parseInt(Number(command)) == command && !isNaN(parseInt(command, 10))) {
           var responseUrl = req.body.response_url
           console.log(req.body);
           var immediateText = immediateTextArray[Math.floor(Math.random() * immediateTextArray.length)];
@@ -97,6 +92,9 @@ app.post("/fogbugz", function(req, res) {
           var errorText = "Sorry, " + req.body.text + " doesn't look like a valid command. \n" + helpText
           res.send(errorText)
         }
+    }
+    else {
+      res.send(helpText)
     }
   }
 });
