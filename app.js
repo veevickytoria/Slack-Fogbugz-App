@@ -102,8 +102,8 @@ var getFogbugzCase = function(query, responseUrl) {
                         "response_type": "in_channel",
                         "text": "Fogbugz Info",
                         "attachments": [
-                                { "title": fCase.ixBug + ": " + fCase.sTitle,
-                                  "title_link": "https://ixl.fogbugz.com/f/cases/"+ fCase.ixBug + "/",
+                                { "title": fCase.ixBug[0] + ": " + fCase.sTitle,
+                                  "title_link": "https://ixl.fogbugz.com/f/cases/"+ fCase.fCase.ixBug[0] + "/",
                                   "text": "Status: " + fCase.sStatus + "\n"
                                   + "Priority: " + fCase.ixPriority + " - " + fCase.sPriority + "\n"
                                   + "Assigned To: " + fCase.sPersonAssignedTo + "\n"
